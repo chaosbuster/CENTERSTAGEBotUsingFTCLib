@@ -1,14 +1,11 @@
 package teamcode;
 
 import ftclib.command.CommandOpMode;
-import ftclib.gamepad.GamepadEx;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+import teamcode.CommandGroups.TestAutoMotions;
 import teamcode.Subsystems.DriveSubsystem;
-import teamcode.Commands.DriveDistance;
-import teamcode.Commands.TurnAngleCommand;
 
 @Autonomous(name = "Auto")
 public class AutoOpMode extends CommandOpMode {
@@ -20,23 +17,12 @@ public class AutoOpMode extends CommandOpMode {
         driveSubsystem = new DriveSubsystem(hardwareMap);
 
         driveSubsystem.initialize();
+
+        schedule(new TestAutoMotions(driveSubsystem));
     }
 
     @Override
     public void run() {
-        // Drive Forward for 10 inches with a timeout of 4 seconds.
-        //addSequential(new DriveDistance(10, 0.5, driveSubsystem), 2);
-        // Turn 90 degrees with a timeout of 2 seconds
-        //addSequential(new TurnAngleCommand(90, driveSubsystem), 2);
-
-        // DO SOME ACTION
-
-        sleep(500);
-
-        // Drive Forward for -10 inches with a timeout of 4 seconds.
-        //addSequential(new DriveDistance(-10, 0.5, driveSubsystem), 4);
-
-        //addSequential(new DriveDistance(10, 0.75, driveSubsystem), 3);
 
     }
 }
