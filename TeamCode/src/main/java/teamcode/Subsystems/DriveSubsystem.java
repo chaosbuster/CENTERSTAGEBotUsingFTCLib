@@ -3,13 +3,15 @@ package teamcode.Subsystems;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import ftclib.command.SubsystemBase;
 import ftclib.drivebase.MecanumDrive;
+import ftclib.hardware.RevIMU;
 import ftclib.hardware.motors.Motor.Encoder;
 import ftclib.hardware.motors.Motor;
 
 public class DriveSubsystem extends SubsystemBase {
 
-    private final String mName_frontleft = "left_front_drive", mName_frontright = "right_front_drive";
-    private final String mName_backleft = "left_back_drive", mName_backright = "right_back_drive";
+    private final String hwName_frontleft = "left_front_drive", hwName_frontright = "right_front_drive";
+    private final String hwName_backleft = "left_back_drive", hwName_backright = "right_back_drive";
+    private final String hwName_imu = "imu";
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -27,6 +29,7 @@ public class DriveSubsystem extends SubsystemBase {
     private Motor motor_frontleft = null, motor_frontright = null;
     private Motor motor_backleft = null, motor_backright = null;
     private MecanumDrive m_drive;
+    private RevIMU hw_imu = null;
 
     private Encoder en_frontleft, en_frontright;
     private Encoder en_backleft, en_backright;
@@ -36,11 +39,14 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public DriveSubsystem(HardwareMap hardwareMap) {
 
+        // Using the hardware map to instantiate our gyro from the REV Control Hub
+        hw_imu= new RevIMU(hardwareMap, hwName_imu);
+
         // Using the hardware map that was passed to us, let's get handles for all of our motors
-        motor_frontleft = new Motor(hardwareMap, mName_frontleft);
-        motor_frontright = new Motor(hardwareMap, mName_frontright);
-        motor_backleft = new Motor(hardwareMap, mName_backleft);
-        motor_backright = new Motor(hardwareMap, mName_backright);
+        motor_frontleft = new Motor(hardwareMap, hwName_frontleft);
+        motor_frontright = new Motor(hardwareMap, hwName_frontright);
+        motor_backleft = new Motor(hardwareMap, hwName_backleft);
+        motor_backright = new Motor(hardwareMap, hwName_backright);
 
         // Set the distance per pulse for each motor based on wheel diameter, motor and gearing
         motor_frontleft.setDistancePerPulse(INCHES_PER_PULSE);
@@ -91,11 +97,28 @@ public class DriveSubsystem extends SubsystemBase {
         return en_backright.getDistance();
     }
 
+    /**
+     * @return Relative heading of the robot using REVImu Gyro Hardware
+     */
+    public double getHeading() {
+        // Return yaw
+        return hw_imu.getHeading();
+    }
+
+    public void resetHeading() {
+        hw_imu.reset();
+    }
+
     public void resetEncoders() {
         en_frontleft.reset();
         en_frontright.reset();
         en_backleft.reset();
         en_backright.reset();
+    }
+
+    public void reset() {
+        resetEncoders();
+        resetHeading();
     }
 
     public double getAverageEncoderDistance() {
@@ -104,6 +127,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void initialize() {
-        resetEncoders();
+        reset();
     }
 }
