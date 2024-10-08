@@ -1,72 +1,101 @@
-package com.example.ftclibexamples.CommandSample;
+package teamcode.Subsystems;
 
-import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
-import com.arcrobotics.ftclib.hardware.motors.Motor.Encoder;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import ftclib.command.SubsystemBase;
+import ftclib.drivebase.MecanumDrive;
+import ftclib.hardware.motors.Motor.Encoder;
+import ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class DriveSubsystem extends SubsystemBase {
 
-    private final DifferentialDrive m_drive;
+    private final String mName_frontleft = "left_front_drive", mName_frontright = "right_front_drive";
+    private final String mName_backleft = "left_back_drive", mName_backright = "right_back_drive";
 
-    private final Encoder m_left, m_right;
+    // Calculate the COUNTS_PER_INCH for your specific drive train.
+    // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
+    // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
+    // For example for a REV HEX motor with a 3:1 Gear and a 4:1 gear on it would mean a
+    // DRIVE_GEAR_REDUCTION =
+    static final double     COUNTS_PER_MOTOR_REV    = 28.0 ;   //  For a REV HD Hex Motor No Gearbox)
+    static final double     DRIVE_GEAR_REDUCTION    = 12.0 ;     // 3:1 and a 4:1 Gear Box
+    static final double     WHEEL_DIAMETER_INCHES   = 2.952756 ;     // For figuring circumference;  75 mm REV mecanum wheels
+    static final double     INCHES_PER_PULSE        = (WHEEL_DIAMETER_INCHES * 3.1415) /
+                                                      (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION);
+    private final Boolean mInverted_frontleft = true, mInverted_frontright = false;
+    private final Boolean mInverted_backleft = true, mInverted_backright = false;
 
-    private final double WHEEL_DIAMETER;
+    private Motor motor_frontleft = null, motor_frontright = null;
+    private Motor motor_backleft = null, motor_backright = null;
+    private MecanumDrive m_drive;
+
+    private Encoder en_frontleft, en_frontright;
+    private Encoder en_backleft, en_backright;
 
     /**
      * Creates a new DriveSubsystem.
      */
-    public DriveSubsystem(MotorEx leftMotor, MotorEx rightMotor, final double diameter) {
-        m_left = leftMotor.encoder;
-        m_right = rightMotor.encoder;
+    public DriveSubsystem(HardwareMap hardwareMap) {
 
-        WHEEL_DIAMETER = diameter;
+        // Using the hardware map that was passed to us, let's get handles for all of our motors
+        motor_frontleft = new Motor(hardwareMap, mName_frontleft);
+        motor_frontright = new Motor(hardwareMap, mName_frontright);
+        motor_backleft = new Motor(hardwareMap, mName_backleft);
+        motor_backright = new Motor(hardwareMap, mName_backright);
 
-        m_drive = new DifferentialDrive(leftMotor, rightMotor);
+        // Set the distance per pulse for each motor based on wheel diameter, motor and gearing
+        motor_frontleft.setDistancePerPulse(INCHES_PER_PULSE);
+        motor_frontright.setDistancePerPulse(INCHES_PER_PULSE);
+        motor_backleft.setDistancePerPulse(INCHES_PER_PULSE);
+        motor_backright.setDistancePerPulse(INCHES_PER_PULSE);
+
+        // Using the motor handle let's store our encoder handles for later retrieval
+        en_frontleft = motor_frontleft.encoder;
+        en_frontright = motor_frontright.encoder;
+        en_backleft = motor_backleft.encoder;
+        en_backright = motor_backright.encoder;
+
+        // Now let's finally instantiate our MecanumDrive
+        m_drive = new MecanumDrive(motor_frontleft, motor_frontright, motor_backleft, motor_backright);
     }
 
     /**
-     * Creates a new DriveSubsystem with the hardware map and configuration names.
-     */
-    public DriveSubsystem(HardwareMap hMap, final String leftMotorName, String rightMotorName,
-                          final double diameter) {
-        this(new MotorEx(hMap, leftMotorName), new MotorEx(hMap, rightMotorName), diameter);
-    }
-
-    /**
-     * Drives the robot using arcade controls.
+     * Drives the robot using controls.
      *
+     * @param left the commanded strafe movement
      * @param fwd the commanded forward movement
      * @param rot the commanded rotation
      */
-    public void drive(double fwd, double rot) {
-        m_drive.arcadeDrive(fwd, rot);
+    public void drive(double left, double fwd, double rot) {
+        m_drive.driveRobotCentric(left, fwd, rot);
     }
 
-    public double getLeftEncoderVal() {
-        return m_left.getPosition();
+    public double getFrontLeftEncoderDistance() {
+        return en_frontleft.getDistance();
     }
 
-    public double getLeftEncoderDistance() {
-        return m_left.getRevolutions() * WHEEL_DIAMETER * Math.PI;
+    public double getFrontRightEncoderDistance() {
+        return en_frontright.getDistance();
     }
 
-    public double getRightEncoderVal() {
-        return m_right.getPosition();
+    public double getBackLeftEncoderDistance() {
+        return en_backleft.getDistance();
     }
 
-    public double getRightEncoderDistance() {
-        return m_right.getRevolutions() * WHEEL_DIAMETER * Math.PI;
+    public double getBackRightEncoderDistance() {
+        return en_backright.getDistance();
     }
 
     public void resetEncoders() {
-        m_left.reset();
-        m_right.reset();
+        en_frontleft.reset();
+        en_frontright.reset();
+        en_backleft.reset();
+        en_backright.reset();
     }
 
     public double getAverageEncoderDistance() {
-        return (getLeftEncoderDistance() + getRightEncoderDistance()) / 2.0;
+        return (getFrontLeftEncoderDistance() + getFrontRightEncoderDistance() +
+                getBackLeftEncoderDistance() + getBackRightEncoderDistance()) / 4.0;
     }
 
 }

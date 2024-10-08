@@ -1,6 +1,8 @@
-package com.example.ftclibexamples.CommandSample;
+package teamcode.Commands;
 
-import com.arcrobotics.ftclib.command.CommandBase;
+import ftclib.command.CommandBase;
+
+import teamcode.Subsystems.DriveSubsystem;
 
 public class DriveDistance extends CommandBase {
 
@@ -24,12 +26,12 @@ public class DriveDistance extends CommandBase {
     @Override
     public void initialize() {
         m_drive.resetEncoders();
-        m_drive.drive(m_speed, 0);
+        m_drive.drive(0, m_speed, 0);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_drive.drive(0, 0);
+        m_drive.drive(0, 0, 0);
     }
 
 
