@@ -5,7 +5,6 @@ import ftclib.command.SubsystemBase;
 import ftclib.drivebase.MecanumDrive;
 import ftclib.hardware.motors.Motor.Encoder;
 import ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -57,7 +56,13 @@ public class DriveSubsystem extends SubsystemBase {
 
         // Now let's finally instantiate our MecanumDrive
         m_drive = new MecanumDrive(motor_frontleft, motor_frontright, motor_backleft, motor_backright);
+
     }
+
+    /**
+     * Returns the handle for the MecanumDrive for this DriveSubsystem
+     */
+    public MecanumDrive getRobotDrive() {return m_drive;}
 
     /**
      * Drives the robot using controls.
@@ -98,4 +103,7 @@ public class DriveSubsystem extends SubsystemBase {
                 getBackLeftEncoderDistance() + getBackRightEncoderDistance()) / 4.0;
     }
 
+    public void initialize() {
+        resetEncoders();
+    }
 }
