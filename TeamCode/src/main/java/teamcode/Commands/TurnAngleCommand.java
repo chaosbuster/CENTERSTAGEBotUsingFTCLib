@@ -1,11 +1,10 @@
 package teamcode.Commands;
 
-import ftclib.command.old.Command;
+import ftclib.command.CommandBase;
 import ftclib.controller.PController;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import teamcode.Subsystems.DriveSubsystem;
 
-public class TurnAngleCommand implements Command {
+public class TurnAngleCommand extends CommandBase {
 
     DriveSubsystem driveSubsystem;
     double angle;
