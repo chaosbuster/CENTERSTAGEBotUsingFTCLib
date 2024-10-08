@@ -42,9 +42,8 @@ public class TurnAngleCommand extends CommandBase {
     }
 
     @Override
-    public void end() {
-        driveSubsystem.getRobotDrive().driveRobotCentric(0, 0, 0);
-
+    public void end(boolean interrupted) {
+        driveSubsystem.drive(0, 0, 0);
     }
 
     @Override
