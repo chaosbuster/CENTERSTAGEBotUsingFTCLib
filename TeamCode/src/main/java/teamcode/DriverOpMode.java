@@ -13,19 +13,19 @@ import teamcode.Commands.DefaultDrive;
 @Disabled
 public class DriverOpMode extends CommandOpMode {
 
-    private DriveSubsystem m_drive;
-    private GamepadEx m_driverOp;
-    private DefaultDrive m_driveCommand;
+    private DriveSubsystem driveSubsystem;
+    private GamepadEx driverOp;
+    private DefaultDrive driveDefaultCommand;
 
     @Override
     public void initialize() {
-        m_drive = new DriveSubsystem(hardwareMap);
+        driveSubsystem = new DriveSubsystem(hardwareMap);
 
-        m_driverOp = new GamepadEx(gamepad1);
-        m_driveCommand = new DefaultDrive(m_drive, () -> m_driverOp.getLeftX(), () -> m_driverOp.getLeftY(), () -> m_driverOp.getRightX());
+        driverOp = new GamepadEx(gamepad1);
+        driveDefaultCommand = new DefaultDrive(driveSubsystem, () -> driverOp.getLeftX(), () -> driverOp.getLeftY(), () -> driverOp.getRightX());
 
-        register(m_drive);
-        m_drive.setDefaultCommand(m_driveCommand);
+        register(driveSubsystem);
+        driveSubsystem.setDefaultCommand(driveDefaultCommand);
     }
 
 }
