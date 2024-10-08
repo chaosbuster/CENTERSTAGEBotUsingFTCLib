@@ -2,19 +2,18 @@ package teamcode;
 
 import ftclib.command.CommandOpMode;
 import ftclib.gamepad.GamepadEx;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import teamcode.Subsystems.DriveSubsystem;
 import teamcode.Commands.DriveDistance;
 import teamcode.Commands.TurnAngleCommand;
 
-@Disabled
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Command-based Autonomous Sample")
-// @Autonomous(...) is the other common choice
+@Autonomous(name = "Auto")
 public class AutoOpMode extends CommandOpMode {
 
     DriveSubsystem driveSubsystem;
-    GamepadEx driverGamepad;
 
     @Override
     public void initialize() {

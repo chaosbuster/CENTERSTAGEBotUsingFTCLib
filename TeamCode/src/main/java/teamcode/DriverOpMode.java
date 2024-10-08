@@ -10,7 +10,6 @@ import teamcode.Subsystems.DriveSubsystem;
 import teamcode.Commands.DefaultDrive;
 
 @TeleOp(name = "Driver Period")
-@Disabled
 public class DriverOpMode extends CommandOpMode {
 
     private DriveSubsystem driveSubsystem;
