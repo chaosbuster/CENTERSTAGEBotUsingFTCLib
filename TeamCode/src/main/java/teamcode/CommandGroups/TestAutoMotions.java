@@ -13,10 +13,11 @@ public class TestAutoMotions extends SequentialCommandGroup {
     public TestAutoMotions(DriveSubsystem drive) {
 
         // Drive Forward for 10 inches
+        //new DriveDistance(10, 0.5, drive)
         // Turn 90 degrees
+        //new TurnAngleCommand(90.0, drive)
         addCommands(
-            new DriveDistance(10, 0.5, drive),
-            new TurnAngleCommand(90, drive)
+                new TurnAngleCommand(90.0, drive)
         );
         addRequirements(drive);
 

@@ -15,14 +15,23 @@ public class AutoOpMode extends CommandOpMode {
     @Override
     public void initialize() {
         driveSubsystem = new DriveSubsystem(hardwareMap);
-
         driveSubsystem.initialize();
-
-        schedule(new TestAutoMotions(driveSubsystem));
+        register(driveSubsystem);
     }
 
     @Override
-    public void run() {
+    public void runOpMode() throws InterruptedException {
+        initialize();
 
+        waitForStart();
+
+        // Schedule our automations
+        schedule(new TestAutoMotions(driveSubsystem));
+
+        // run the scheduler
+        while (!isStopRequested() && opModeIsActive()) {
+            run();
+        }
+        reset();
     }
 }
