@@ -11,7 +11,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     private final String hwName_frontleft = "left_front_drive", hwName_frontright = "right_front_drive";
     private final String hwName_backleft = "left_back_drive", hwName_backright = "right_back_drive";
-    private final String hwName_imu = "imu";
+    // NOTE: The REV Gyro from the IMU is used by the drive system with a name in the config of 'imu'
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -40,7 +40,7 @@ public class DriveSubsystem extends SubsystemBase {
     public DriveSubsystem(HardwareMap hardwareMap) {
 
         // Using the hardware map to instantiate our gyro from the REV Control Hub
-        hw_imu= new RevIMU(hardwareMap, hwName_imu);
+        hw_imu= new RevIMU(hardwareMap);
 
         // Using the hardware map that was passed to us, let's get handles for all of our motors
         motor_frontleft = new Motor(hardwareMap, hwName_frontleft);
@@ -116,17 +116,12 @@ public class DriveSubsystem extends SubsystemBase {
         en_backright.reset();
     }
 
-    public void reset() {
-        resetEncoders();
-        resetHeading();
-    }
-
     public double getAverageEncoderDistance() {
         return (getFrontLeftEncoderDistance() + getFrontRightEncoderDistance() +
                 getBackLeftEncoderDistance() + getBackRightEncoderDistance()) / 4.0;
     }
 
     public void initialize() {
-        reset();
+        hw_imu.init();
     }
 }
