@@ -16,13 +16,12 @@ public class DriveSubsystem extends SubsystemBase {
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
     // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
-    // For example for a REV HEX motor with a 3:1 Gear and a 4:1 gear on it would mean a
-    // DRIVE_GEAR_REDUCTION =
     static final double     COUNTS_PER_MOTOR_REV    = 28.0 ;   //  For a REV HD Hex Motor No Gearbox)
     static final double     DRIVE_GEAR_REDUCTION    = 12.0 ;     // 3:1 and a 4:1 Gear Box
-    static final double     WHEEL_DIAMETER_INCHES   = 2.952756 ;     // For figuring circumference;  75 mm REV mecanum wheels
-    static final double     INCHES_PER_PULSE        = (WHEEL_DIAMETER_INCHES * 3.1415) /
-                                                      (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION);
+    static final double     WHEEL_DIAMETER_INCHES   = 75.0 / 25.4;     // For figuring circumference;  75 mm REV mecanum wheels
+    static final double     INCHES_PER_COUNT        =  (WHEEL_DIAMETER_INCHES * 3.1415) /
+                                                      (COUNTS_PER_MOTOR_REV / DRIVE_GEAR_REDUCTION);
+    static final double     INCH_PER_TICK_TOUSE    = 0.50;
     private final Boolean mInverted_frontleft = true, mInverted_frontright = false;
     private final Boolean mInverted_backleft = true, mInverted_backright = false;
 
@@ -49,10 +48,10 @@ public class DriveSubsystem extends SubsystemBase {
         motor_backright = new Motor(hardwareMap, hwName_backright);
 
         // Set the distance per pulse for each motor based on wheel diameter, motor and gearing
-        motor_frontleft.setDistancePerPulse(INCHES_PER_PULSE);
-        motor_frontright.setDistancePerPulse(INCHES_PER_PULSE);
-        motor_backleft.setDistancePerPulse(INCHES_PER_PULSE);
-        motor_backright.setDistancePerPulse(INCHES_PER_PULSE);
+        motor_frontleft.setDistancePerPulse(INCH_PER_TICK_TOUSE);
+        motor_frontright.setDistancePerPulse(INCH_PER_TICK_TOUSE);
+        motor_backleft.setDistancePerPulse(INCH_PER_TICK_TOUSE);
+        motor_backright.setDistancePerPulse(INCH_PER_TICK_TOUSE);
 
         // Using the motor handle let's store our encoder handles for later retrieval
         en_frontleft = motor_frontleft.encoder;
