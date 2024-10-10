@@ -17,7 +17,7 @@ public class TestAutoMotions extends SequentialCommandGroup {
         // Turn 90 degrees
         //new TurnAngleCommand(90.0, drive)
         addCommands(
-                new TurnAngleCommand(90.0, drive)
+                new DriveDistance(10.0, 0.25, drive)
         );
         addRequirements(drive);
 
