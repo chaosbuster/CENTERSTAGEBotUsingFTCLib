@@ -1,6 +1,11 @@
 package teamcode.Subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
+
 import ftclib.command.SubsystemBase;
 import ftclib.drivebase.MecanumDrive;
 import ftclib.hardware.RevIMU;
@@ -78,6 +83,31 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void drive(double left, double fwd, double rot) {
         m_drive.driveRobotCentric(left, fwd, rot);
+    }
+
+    public void driveToHeading(double targetdistance, double currentrange, double currentheading, double currentyaw) {
+        final double SPEED_GAIN = 0.02;
+        final double STRAFE_GAIN = 0.015;
+        final double TURN_GAIN = 0.01;
+        final double MAX_AUTO_SPEED = 0.3;
+        final double MAX_AUTO_STRAFE = 0.2;
+        final double MAX_AUTO_TURN = 0.2;
+
+        // Determine range, heading and yaw (tag image rotation) error so we can use them to
+        // control the robot automatically.
+        double rangeError = currentrange - targetdistance;
+        double headingError = currentheading;
+        double yawError = currentyaw;
+
+        // Use the speed and turn "gains" to calculate how we want the robot to move.
+        double drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+        double turn = Range.clip(-headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
+        double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+        telemetry.addData("AUTO: DRIVE, STRAFE, TURN", JavaUtil.formatNumber(drive, 4, 2) + ", " + JavaUtil.formatNumber(strafe, 4, 2) + ", " + JavaUtil.formatNumber(turn, 4, 2));
+
+        drive(strafe, drive, turn);
+
     }
 
     public double getFrontLeftEncoderDistance() {
