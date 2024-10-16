@@ -49,10 +49,12 @@ public class DriveToTag extends CommandBase {
     }
     @Override
     public void execute() {
-        // Get latest reading our AprilTagSubsystem
-        currentDetection = aprilTagSubsystem.getDesiredTag();
+        // Get latest reading from our AprilTagSubsystem
+        if (aprilTagSubsystem.wasDesiredTagFound()) {
+            currentDetection = aprilTagSubsystem.getDesiredTag();
+        }
 
-        // Make sure we a tag pointer
+        // Make sure we have an AprilTag pointer
         if (currentDetection == null) {
             return;
         }
@@ -62,15 +64,22 @@ public class DriveToTag extends CommandBase {
     }
     @Override
     public boolean isFinished() {
-        if (currentDetection == null) {
-            return true;
+        boolean stopMovement = false;
+
+        if (currentDetection == null || !aprilTagSubsystem.wasDesiredTagFound()) {
+            stopMovement = true;
         } else if (Math.abs(currentDetection.ftcPose.range) >= distance) {
-            return false;
+            stopMovement = false;
         } else if (stopRequested) {
-            return true;
+            stopMovement = true;
         } else {
-            return true;
+            stopMovement = true;
         }
+
+        if (stopMovement)
+            driveSubsystem.drive(0,0,0);
+
+        return stopMovement;
     }
 
     public void stopCommand() {

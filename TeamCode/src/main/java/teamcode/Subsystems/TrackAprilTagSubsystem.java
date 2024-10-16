@@ -68,6 +68,7 @@ public class TrackAprilTagSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     @Override
     public void periodic() {
+        tl.addData("VISION", "In periodic() method.");
         desiredTag = null;
 
         if (!ableToRunVision || aprilTagProcessor == null || desiredTagID <= 0 || visionPortal == null) {
@@ -75,7 +76,7 @@ public class TrackAprilTagSubsystem extends SubsystemBase {
             return;
         }
 
-        // Use low exposure time to reduce motion blur
+        // SHOULD ONLY RUN ONCE. Use low exposure time to reduce motion blur.
         if (!manualExposureSet) {
             manualExposureSet = setManualExposure(6, 250);
         }

@@ -92,9 +92,9 @@ public class DriveSubsystem extends SubsystemBase {
         final double SPEED_GAIN = 0.02;
         final double STRAFE_GAIN = 0.015;
         final double TURN_GAIN = 0.01;
-        final double MAX_AUTO_SPEED = 0.3;
+        final double MAX_AUTO_SPEED = 0.2;
         final double MAX_AUTO_STRAFE = 0.2;
-        final double MAX_AUTO_TURN = 0.2;
+        final double MAX_AUTO_TURN = 0.015;
 
         // Determine range, heading and yaw (tag image rotation) error so we can use them to
         // control the robot automatically.
@@ -104,8 +104,8 @@ public class DriveSubsystem extends SubsystemBase {
 
         // Use the speed and turn "gains" to calculate how we want the robot to move.
         double drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-        double turn = Range.clip(-headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
-        double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+        double turn = Range.clip(yawError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
+        double strafe = Range.clip(-headingError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
         tl.addData("AUTO: DRIVE, STRAFE, TURN", JavaUtil.formatNumber(drive, 4, 2) + ", " + JavaUtil.formatNumber(strafe, 4, 2) + ", " + JavaUtil.formatNumber(turn, 4, 2));
 
