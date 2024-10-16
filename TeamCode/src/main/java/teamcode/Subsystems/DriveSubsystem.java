@@ -1,6 +1,6 @@
 package teamcode.Subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
@@ -26,7 +26,7 @@ public class DriveSubsystem extends SubsystemBase {
     static final double     WHEEL_DIAMETER_INCHES   = 75.0 / 25.4;     // For figuring circumference;  75 mm REV mecanum wheels
     static final double     INCHES_PER_COUNT        =  (WHEEL_DIAMETER_INCHES * 3.1415) /
                                                       (COUNTS_PER_MOTOR_REV / DRIVE_GEAR_REDUCTION);
-    static final double     INCH_PER_TICK_TOUSE    = 0.50;
+    static final double     INCH_PER_TICK_TOUSE    = 0.84;
     private final Boolean mInverted_frontleft = true, mInverted_frontright = false;
     private final Boolean mInverted_backleft = true, mInverted_backright = false;
 
@@ -38,10 +38,14 @@ public class DriveSubsystem extends SubsystemBase {
     private Encoder en_frontleft, en_frontright;
     private Encoder en_backleft, en_backright;
 
+    Telemetry tl;
+
     /**
      * Creates a new DriveSubsystem.
      */
-    public DriveSubsystem(HardwareMap hardwareMap) {
+    public DriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
+
+        tl = telemetry;
 
         // Using the hardware map to instantiate our gyro from the REV Control Hub
         hw_imu= new RevIMU(hardwareMap);
@@ -66,7 +70,6 @@ public class DriveSubsystem extends SubsystemBase {
 
         // Now let's finally instantiate our MecanumDrive
         m_drive = new MecanumDrive(motor_frontleft, motor_frontright, motor_backleft, motor_backright);
-
     }
 
     /**
@@ -104,7 +107,7 @@ public class DriveSubsystem extends SubsystemBase {
         double turn = Range.clip(-headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
         double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
-        telemetry.addData("AUTO: DRIVE, STRAFE, TURN", JavaUtil.formatNumber(drive, 4, 2) + ", " + JavaUtil.formatNumber(strafe, 4, 2) + ", " + JavaUtil.formatNumber(turn, 4, 2));
+        tl.addData("AUTO: DRIVE, STRAFE, TURN", JavaUtil.formatNumber(drive, 4, 2) + ", " + JavaUtil.formatNumber(strafe, 4, 2) + ", " + JavaUtil.formatNumber(turn, 4, 2));
 
         drive(strafe, drive, turn);
 

@@ -1,5 +1,6 @@
 package teamcode.Commands;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
@@ -15,6 +16,7 @@ public class DriveToTag extends CommandBase {
     private final double distance;
     private final double m_speed;
     private AprilTagDetection currentDetection = null;
+    private boolean stopRequested = false;
 
     /**
      * Creates a new DriveToTag.
@@ -31,6 +33,7 @@ public class DriveToTag extends CommandBase {
         m_speed = speed;
         driveSubsystem = drive;
         aprilTagSubsystem = vision;
+        aprilTagSubsystem.setDesiredTagID(desiredTagID);
     }
 
     @Override
@@ -63,9 +66,14 @@ public class DriveToTag extends CommandBase {
             return true;
         } else if (Math.abs(currentDetection.ftcPose.range) >= distance) {
             return false;
+        } else if (stopRequested) {
+            return true;
         } else {
             return true;
         }
     }
 
+    public void stopCommand() {
+        stopRequested = true;
+    }
 }
