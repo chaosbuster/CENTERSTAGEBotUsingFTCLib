@@ -17,7 +17,7 @@ public class TurnAngleCommand extends CommandBase {
         this.angle = angle;
         // At 180 degrees, we should spin almost as fast as we can to correct
         // 1 is full power. 180 * 0.05 = 0.9
-        headingController = new PController(0.05, angle, driveSubsystem.getHeading());
+        headingController = new PController(0.01, angle, driveSubsystem.getHeading());
         headingController.setSetPoint(angle);
 
     }
