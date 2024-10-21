@@ -26,14 +26,16 @@ public class DriveDistance extends CommandBase {
     @Override
     public void initialize() {
         driveSubsystem.resetEncoders();
-        driveSubsystem.drive(0, m_speed, 0);
     }
 
+    @Override
+    public void execute() {
+        driveSubsystem.drive(0, m_speed, 0);
+    }
     @Override
     public void end(boolean interrupted) {
         driveSubsystem.drive(0, 0, 0);
     }
-
 
     @Override
     public boolean isFinished() {
