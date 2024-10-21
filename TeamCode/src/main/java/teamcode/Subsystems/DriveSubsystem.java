@@ -1,6 +1,11 @@
 package teamcode.Subsystems;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
+
 import ftclib.command.SubsystemBase;
 import ftclib.drivebase.MecanumDrive;
 import ftclib.hardware.RevIMU;
@@ -21,7 +26,7 @@ public class DriveSubsystem extends SubsystemBase {
     static final double     WHEEL_DIAMETER_INCHES   = 75.0 / 25.4;     // For figuring circumference;  75 mm REV mecanum wheels
     static final double     INCHES_PER_COUNT        =  (WHEEL_DIAMETER_INCHES * 3.1415) /
                                                       (COUNTS_PER_MOTOR_REV / DRIVE_GEAR_REDUCTION);
-    static final double     INCH_PER_TICK_TOUSE    = 0.50;
+    static final double     INCH_PER_TICK_TOUSE    = 0.84;
     private final Boolean mInverted_frontleft = true, mInverted_frontright = false;
     private final Boolean mInverted_backleft = true, mInverted_backright = false;
 
@@ -33,10 +38,14 @@ public class DriveSubsystem extends SubsystemBase {
     private Encoder en_frontleft, en_frontright;
     private Encoder en_backleft, en_backright;
 
+    Telemetry tl;
+
     /**
      * Creates a new DriveSubsystem.
      */
-    public DriveSubsystem(HardwareMap hardwareMap) {
+    public DriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
+
+        tl = telemetry;
 
         // Using the hardware map to instantiate our gyro from the REV Control Hub
         hw_imu= new RevIMU(hardwareMap);
@@ -61,7 +70,6 @@ public class DriveSubsystem extends SubsystemBase {
 
         // Now let's finally instantiate our MecanumDrive
         m_drive = new MecanumDrive(motor_frontleft, motor_frontright, motor_backleft, motor_backright);
-
     }
 
     /**
@@ -78,6 +86,31 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void drive(double left, double fwd, double rot) {
         m_drive.driveRobotCentric(left, fwd, rot);
+    }
+
+    public void driveToHeading(double targetdistance, double currentrange, double currentheading, double currentyaw) {
+        final double SPEED_GAIN = 0.02;
+        final double STRAFE_GAIN = 0.015;
+        final double TURN_GAIN = 0.01;
+        final double MAX_AUTO_SPEED = 0.2;
+        final double MAX_AUTO_STRAFE = 0.2;
+        final double MAX_AUTO_TURN = 0.015;
+
+        // Determine range, heading and yaw (tag image rotation) error so we can use them to
+        // control the robot automatically.
+        double rangeError = currentrange - targetdistance;
+        double headingError = currentheading;
+        double yawError = currentyaw;
+
+        // Use the speed and turn "gains" to calculate how we want the robot to move.
+        double drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+        double turn = Range.clip(yawError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
+        double strafe = Range.clip(-headingError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+        tl.addData("AUTO: DRIVE, STRAFE, TURN", JavaUtil.formatNumber(drive, 4, 2) + ", " + JavaUtil.formatNumber(strafe, 4, 2) + ", " + JavaUtil.formatNumber(turn, 4, 2));
+
+        drive(strafe, drive, turn);
+
     }
 
     public double getFrontLeftEncoderDistance() {

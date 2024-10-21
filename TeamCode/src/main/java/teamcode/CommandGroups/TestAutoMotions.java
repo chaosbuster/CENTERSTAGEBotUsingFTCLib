@@ -2,24 +2,30 @@ package teamcode.CommandGroups;
 
 import ftclib.command.SequentialCommandGroup;
 import teamcode.Commands.DriveDistance;
+import teamcode.Commands.DriveToTag;
 import teamcode.Commands.TurnAngleCommand;
 import teamcode.Subsystems.DriveSubsystem;
+import teamcode.Subsystems.TrackAprilTagSubsystem;
 
 /**
  *  A group of commands to test automating multiple tasks.
  */
 public class TestAutoMotions extends SequentialCommandGroup {
 
-    public TestAutoMotions(DriveSubsystem drive) {
+    public TestAutoMotions(DriveSubsystem driveSubsystem, TrackAprilTagSubsystem aprilTagSubsystem) {
 
         // Drive Forward for 10 inches
-        //new DriveDistance(10, 0.5, drive)
+        //new DriveDistance(12, 0.25, driveSubsystem)
         // Turn 90 degrees
-        //new TurnAngleCommand(90.0, drive)
+        //new TurnAngleCommand(90.0, driveSubsystem)
+
+        //new DriveToTag(12, 12.0, 0.25, driveSubsystem, aprilTagSubsystem)
         addCommands(
-                new DriveDistance(10.0, 0.25, drive)
+                new DriveDistance(12.0, 0.25, driveSubsystem),
+                new TurnAngleCommand(90.0, driveSubsystem),
+                new DriveToTag(13, 12.0, 0.25, driveSubsystem, aprilTagSubsystem)
         );
-        addRequirements(drive);
+        addRequirements(driveSubsystem, aprilTagSubsystem);
 
     }
 }
